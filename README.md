@@ -2,7 +2,7 @@
 simple library for weixin jssdk signature
 
 # Useage
-
+```go
 package main
 
 import (
@@ -46,3 +46,4 @@ func main() {
 	err = http.ListenAndServe(":9090", nil)
 	checkRuntimeErr(err)
 }
+```
