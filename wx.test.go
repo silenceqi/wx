@@ -6,7 +6,7 @@ import (
 
 	"net/http"
 
-	"./wx"
+	"github.com/silenceqi/wx"
 )
 
 func checkRuntimeErr(err error) bool {
