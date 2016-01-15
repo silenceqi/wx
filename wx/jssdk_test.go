@@ -22,3 +22,11 @@ func TestRun(t *testing.T) {
 	}
 	sdkTest.generateNonceStr()
 }
+
+func Benchmark_GenerateNonceStr(b *testing.B) {
+	sdk := NewJsSdk()
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		sdk.GenerateNoncestr(32)
+	}
+}

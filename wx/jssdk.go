@@ -1,6 +1,7 @@
 package wx
 
 import (
+	"bytes"
 	"crypto/sha1"
 	"encoding/json"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"sort"
+	"sync"
 	"time"
 )
 
@@ -33,16 +35,26 @@ func NewJsSdk() JsSdk {
 	return &JsSdkDefault{}
 }
 
+var chars string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+var bufPool = sync.Pool{
+	New: func() interface{} {
+		return new(bytes.Buffer)
+	},
+}
+
 func (sdk *JsSdkDefault) GenerateNoncestr(length int) string {
-	chars := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	var str string
+	buf := bufPool.Get().(*bytes.Buffer)
+	defer func() {
+		buf.Reset()
+		bufPool.Put(buf)
+	}()
 	var ridx int
 	upBound := len(chars)
 	for i := 0; i < length; i++ {
 		ridx = rand.Intn(upBound)
-		str += chars[ridx : ridx+1]
+		buf.WriteByte(chars[ridx])
 	}
-	return str
+	return buf.String()
 }
 
 func (sdk *JsSdkDefault) GetTicket(accessToken string) (*TicketResponse, error) {
